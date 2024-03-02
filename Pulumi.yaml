@@ -1,0 +1,7 @@
+name: aws-ts-wordpress-fargate-rds
+runtime: nodejs
+description: Deploys Wordpress in ECS Fargate with RDS backend.
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: https://github.com/pulumi/examples/blob/master/aws-ts-wordpress-fargate-rds/README.md
