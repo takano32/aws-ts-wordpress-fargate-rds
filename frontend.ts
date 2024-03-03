@@ -61,18 +61,18 @@ export class WebService extends pulumi.ComponentResource {
     const assumeRolePolicy = {
       "Version": "2008-10-17",
       "Statement": [{
-          "Sid": "",
-          "Effect": "Allow",
-          "Principal": {
-              "Service": "ecs-tasks.amazonaws.com",
-          },
-          "Action": "sts:AssumeRole",
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ecs-tasks.amazonaws.com",
+        },
+        "Action": "sts:AssumeRole",
       }],
     };
 
     const role = new aws.iam.Role(`${name}-task-role`, {
       assumeRolePolicy: JSON.stringify(assumeRolePolicy),
-      }, { parent: this });
+    }, { parent: this });
 
     const rpa = new aws.iam.RolePolicyAttachment(`${name}-task-policy`, {
       role: role.name,
@@ -83,40 +83,40 @@ export class WebService extends pulumi.ComponentResource {
     const taskName = `${name}-app-task`;
     const containerName = `${name}-app-container`;
     const taskDefinition = new aws.ecs.TaskDefinition(taskName, {
-        family: "fargate-task-definition",
-        cpu: "256",
-        memory: "512",
-        networkMode: "awsvpc",
-        requiresCompatibilities: ["FARGATE"],
-        executionRoleArn: role.arn,
-        containerDefinitions: pulumi.jsonStringify([{
-          "name": containerName,
-          "image": "wordpress",
-          "portMappings": [{
-            "containerPort": 80,
-            "hostPort": 80,
-            "protocol": "tcp",
-          }],
-          "environment": [
-            {
-              "name": "WORDPRESS_DB_HOST",
-              "value": pulumi.interpolate `${args.dbHost}:${args.dbPort}`,
-            },
-            {
-              "name": "WORDPRESS_DB_NAME",
-              "value": args.dbName,
-            },
-            {
-              "name": "WORDPRESS_DB_USER",
-              "value": args.dbUser,
-            },
-            {
-              "name": "WORDPRESS_DB_PASSWORD",
-              "value": args.dbPassword,
-            },
-          ],
-        }]),
-      }, { parent: this });
+      family: "fargate-task-definition",
+      cpu: "256",
+      memory: "512",
+      networkMode: "awsvpc",
+      requiresCompatibilities: ["FARGATE"],
+      executionRoleArn: role.arn,
+      containerDefinitions: pulumi.jsonStringify([{
+        "name": containerName,
+        "image": "wordpress",
+        "portMappings": [{
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp",
+        }],
+        "environment": [
+          {
+            "name": "WORDPRESS_DB_HOST",
+            "value": pulumi.interpolate`${args.dbHost}:${args.dbPort}`,
+          },
+          {
+            "name": "WORDPRESS_DB_NAME",
+            "value": args.dbName,
+          },
+          {
+            "name": "WORDPRESS_DB_USER",
+            "value": args.dbUser,
+          },
+          {
+            "name": "WORDPRESS_DB_PASSWORD",
+            "value": args.dbPassword,
+          },
+        ],
+      }]),
+    }, { parent: this });
 
     const service = new aws.ecs.Service(`${name}-app-svc`, {
       cluster: cluster.arn,
@@ -129,11 +129,11 @@ export class WebService extends pulumi.ComponentResource {
         securityGroups: args.securityGroupIds,
       },
       loadBalancers: [{
-          targetGroupArn: atg.arn,
-          containerName: containerName,
-          containerPort: 80,
+        targetGroupArn: atg.arn,
+        containerName: containerName,
+        containerPort: 80,
       }],
-    }, { dependsOn: [wl], parent: this});
+    }, { dependsOn: [wl], parent: this });
 
     this.dnsName = alb.dnsName;
     this.clusterName = cluster.name;

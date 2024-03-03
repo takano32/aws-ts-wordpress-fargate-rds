@@ -27,7 +27,7 @@ export class Db extends pulumi.ComponentResource {
     const rdsSubnetGroupName = `${name}-sng`;
     const rdsSubnetGroup = new rds.SubnetGroup(rdsSubnetGroupName, {
       subnetIds: args.subnetIds,
-      tags: { "Name": rdsSubnetGroupName},
+      tags: { "Name": rdsSubnetGroupName },
     }, { parent: this });
 
     // RDS DB
